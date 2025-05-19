@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
+
 type Props = {
   leadId: string;
 };

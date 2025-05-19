@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import LeadFileUpload from '../../components/LeadFileUpload';
 import { supabase } from '../../lib/supabaseClient';
+import LeadFileUpload from '../../components/LeadFileUpload';
+
 
 
 const statusColor = {
