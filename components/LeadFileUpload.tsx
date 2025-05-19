@@ -1,48 +1,62 @@
-// /components/LeadFileUpload.tsx
-
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
+import { supabase } from '../lib/supabaseClient';
 
-export default function LeadFileUpload({ leadId }: { leadId: string }) {
+type Props = {
+  leadId: string;
+};
+
+export default function LeadFileUpload({ leadId }: Props) {
+  const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState('');
 
   const handleUpload = async () => {
     if (!file) return;
-    setStatus('Uploading...');
+    setUploading(true);
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('leadId', leadId);
+    const filePath = `${leadId}/${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from('lead-files')
+      .upload(filePath, file);
 
-    try {
-      const res = await axios.post('/api/upload', formData);
-      setStatus(`Uploaded as: ${res.data.category}`);
-    } catch (err) {
-      console.error(err);
-      setStatus('Upload failed');
+    if (uploadError) {
+      alert('Upload failed: ' + uploadError.message);
+      setUploading(false);
+      return;
     }
+
+    const { data: publicURL } = supabase.storage
+      .from('lead-files')
+      .getPublicUrl(filePath);
+
+    await supabase.from('uploads').insert({
+      lead_id: leadId,
+      filename: file.name,
+      category: 'uncategorized',
+      url: publicURL.publicUrl,
+    });
+
+    alert('✅ File uploaded!');
+    setFile(null);
+    setUploading(false);
   };
 
   return (
-    <div className="mt-4 border-t pt-4">
-      <h3 className="text-sm font-medium text-gray-700">📎 Upload a file for this lead</h3>
-      <div className="flex items-center gap-2 mt-2">
-        <input
-          type="file"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-          className="block w-full text-sm text-gray-500"
-        />
-        <button
-          onClick={handleUpload}
-          className="bg-green-600 text-white text-sm px-4 py-1 rounded hover:bg-green-700"
-        >
-          Upload
-        </button>
-      </div>
-      {status && <p className="text-xs text-gray-500 mt-1">{status}</p>}
+    <div className="mt-4 border-t pt-2">
+      <label className="text-xs font-medium block mb-1">Upload File:</label>
+      <input
+        type="file"
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
+        className="text-sm"
+      />
+      <button
+        onClick={handleUpload}
+        disabled={!file || uploading}
+        className="mt-2 px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+      >
+        {uploading ? 'Uploading...' : 'Upload'}
+      </button>
     </div>
   );
 }
