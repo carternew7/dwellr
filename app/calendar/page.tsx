@@ -3,7 +3,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient'; // ✅ FIXED
+
 
 export default function CalendarPage() {
   const [events, setEvents] = useState<any[]>([]);
