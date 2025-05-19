@@ -88,7 +88,6 @@ export default function LeadsPage() {
             <p className="text-sm text-gray-600">{lead.email} • {lead.phone}</p>
             <p className="text-xs text-gray-500">{new Date(lead.created_at).toLocaleString()}</p>
 
-            {/* Rep Assignment */}
             <div className="mt-2">
               <label className="text-xs font-medium">Assigned Rep:</label>
               <select
@@ -103,7 +102,6 @@ export default function LeadsPage() {
               </select>
             </div>
 
-            {/* Progress Bar */}
             {typeof lead.progress_index === 'number' && (
               <div className="w-full bg-gray-200 rounded h-2 mt-2">
                 <div
@@ -113,7 +111,6 @@ export default function LeadsPage() {
               </div>
             )}
 
-            {/* Add Lead Note */}
             <div className="mt-3">
               <textarea
                 placeholder="Add a note..."
@@ -129,7 +126,6 @@ export default function LeadsPage() {
               </button>
             </div>
 
-            {/* Upload tool per lead */}
             <LeadFileUpload leadId={lead.id} />
           </div>
         ))}
