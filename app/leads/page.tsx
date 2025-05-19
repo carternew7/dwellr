@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
 import LeadFileUpload from '../../components/LeadFileUpload';
+import { supabase } from '../../lib/supabaseClient';
+
 
 const statusColor = {
   'Fresh': 'bg-blue-100 text-blue-800',
